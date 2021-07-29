@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 // ./ refers to look at the same file.
-import './question.dart';
-import './answer.dart';
+import './quiz.dart';
+import './Result.dart';
 
 void main() {
   // Written by Flutter | Material.dart
@@ -21,23 +21,62 @@ class MyApp extends StatefulWidget {
 // This state is persistant
 // <MyApp> indicates that this state is linked with the above state.
 class _MyAppState extends State<MyApp> {
+  // List of Strings
+  final questions = const [
+    {
+      'questionText': 'What\'s your favorite color?',
+      'answers': [
+        {'text': 'Black', 'score': 10},
+        {'text': 'Red', 'score': 5},
+        {'text': 'Green', 'score': 3},
+        {'text': 'White', 'score': 1},
+      ],
+    },
+    {
+      'questionText': 'What\'s your favourite animal?',
+      'answers': [
+        {'text': 'Rabbit', 'score': 10},
+        {'text': 'Snake', 'score': 5},
+        {'text': 'Elepahant', 'score': 3},
+        {'text': 'Lion', 'score': 1},
+      ],
+    },
+    {
+      'questionText': 'Who\'s your favourite instructor?',
+      'answers': [
+        {'text': 'Max', 'score': 10},
+        {'text': 'Asif', 'score': 5},
+        {'text': 'Josh', 'score': 3},
+        {'text': 'Kelvin', 'score': 1},
+      ],
+    }
+  ];
+
   var questionIndex = 0;
-  void answerQuestion() {
+  var totalScore = 0;
+
+  void resetQuiz() {
+    setState(() {
+      questionIndex = 0;
+      totalScore = 0;
+    });
+  }
+
+  void answerQuestion(int score) {
+    totalScore += score;
     setState(() {
       questionIndex += 1;
     });
     print(questionIndex);
+    if (questionIndex < questions.length) {
+      print('We have more questions!');
+    }
   }
 
   // BuildContext provided by Flutter.
   // build is a function, returns a widget.
   // Widget is provided by material.dart
   Widget build(BuildContext context) {
-    // List of Strings
-    var questions = [
-      'What\'s your favorite color?',
-      'What\'s your favourite animal?'
-    ];
     // Base setup to turn codes into apps
     // home = the page that will be displayed on the screen.
     return MaterialApp(
@@ -46,19 +85,13 @@ class _MyAppState extends State<MyApp> {
         appBar: AppBar(
           title: Text('My First App'),
         ),
-        body: Column(
-          // Shows that it is a list of widgets.
-          children: <Widget>[
-            Question(
-              questions[questionIndex],
-            ),
-            // Dash means it is depricated. Code still works.
-            // Child is a widget
-            Answer(answerQuestion),
-            Answer(answerQuestion),
-            Answer(answerQuestion),
-          ],
-        ),
+        body: questionIndex < questions.length
+            ? Quiz(
+                questions: questions,
+                answerQuestion: answerQuestion,
+                questionIndex: questionIndex,
+              )
+            : Result(totalScore, resetQuiz),
       ),
     );
   }
